@@ -567,10 +567,10 @@ namespace Prototype_2
                 {
                     newX = newX + 1;
                 }
-                int tempX = playerX; int tempY = playerY;
+                int tempX = playerX; int tempY = playerY;              // gets the position it was at before it moves 
                 
                 //move if new position is in maze boundaries
-                if (newX >= 0 && newX < width && newY >= 0 && newY < height)          // what about walls?
+                if (newX >= 0 && newX < width && newY >= 0 && newY < height)          
                 {
                     playerX = newX;
                     playerY = newY;
@@ -578,17 +578,17 @@ namespace Prototype_2
                 char movedFrom;
                 if (items[tempX, tempY] != null)
                 {
-                    movedFrom = items[tempX, tempY].ToCharArray()[0];
+                    movedFrom = items[tempX, tempY].ToCharArray()[0];             // checks if it was an item it was on
                 }
                 else
                 {
                     movedFrom = ' ';
                 }
-                    Console.CursorLeft = tempX * 4 + 2;
-                Console.CursorTop = tempY*2+4;
+                Console.CursorLeft = tempX * 4 + 2;
+                Console.CursorTop = tempY*2+4;                                 // sets previous position to console and displays what it was before you moved
                 Console.Write(movedFrom);
 
-                Console.CursorLeft = newX * 4+2;
+                Console.CursorLeft = newX * 4+2;                               // sets current position to console and displays icon
                 Console.CursorTop = newY * 2+4;
                 Console.Write("P");
                 
