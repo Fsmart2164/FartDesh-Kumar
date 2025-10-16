@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 
 namespace Prototype_2
 {
@@ -129,8 +130,11 @@ namespace Prototype_2
             {
                 Console.WriteLine("Current Result: (incomplete/invalid)");
             }
+            else
+            {
 
-            Console.WriteLine();
+                Console.WriteLine();
+            }
 
             for (int y = 0; y < height; y++)
             {
@@ -160,15 +164,11 @@ namespace Prototype_2
                 // print the left walls and the contents of each cell
                 for (int x = 0; x < width; x++)
                 {
-                    string cell = "   ";
+                    string cell = "   "; // default empty cell
 
-                    // show the player
-                    if (x == playerX && y == playerY)
-                    {
-                        cell = " P ";
-                    }
+                                                                                                                    // removed the player bit as its redundant now (you can see the player in the console)
                     // show an item if one is here
-                    else if (items[x, y] != null)
+                    if (items[x, y] != null)
                     {
                         cell = " " + items[x, y] + " ";
                     }
@@ -218,7 +218,26 @@ namespace Prototype_2
             Console.WriteLine();
             Console.WriteLine("Controls: WASD to move, SPACE pick up, ENTER check target");
         }
-
+        static int inventoryX = 0;
+        static void markoqueeficus(char c)
+        {
+            // updates the players inventory display
+            Console.CursorLeft = 11+inventoryX*2;
+            Console.CursorTop = 1;
+            Console.Write(c);
+            inventoryX++;
+        }
+        static void ClearInventoryDisplay()
+        {
+            // clears the inventory display
+            for (int i = 0; i < 20; i++)
+            {
+                Console.CursorLeft = 11;
+                Console.CursorTop = 1;
+                Console.Write(" ");
+            }
+            inventoryX = 0;
+        }
         static bool IsExpressionValid(List<string> expr)
         {
             // empty list means not valid
@@ -529,6 +548,8 @@ namespace Prototype_2
             }
 
             GenerateMaze(0, 0);
+            ClearInventoryDisplay();
+            collected.Clear();
 
             List<string> solutionExpr = BuildSolvableExpression();                        // unsure where you print the target and how much you have collected so far
 
@@ -540,8 +561,14 @@ namespace Prototype_2
             PlaceDistractors(14);
             Console.Clear();
             PrintMaze();
+            Console.CursorLeft = playerX * 4 + 2;                               // sets current position to console and displays icon
+            Console.CursorTop = playerY * 2 + 4;
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("P");
+            Console.ForegroundColor = ConsoleColor.White;
             while (true)
             {
+                bool validKeyPressed = false;
                 //Console.Clear();
                 //PrintMaze();
 
@@ -554,18 +581,22 @@ namespace Prototype_2
                 if (key == ConsoleKey.W && maze[playerX, playerY].TopWall == false)
                 {
                     newY = newY - 1;
+                    validKeyPressed = true;
                 }
                 else if (key == ConsoleKey.S && maze[playerX, playerY].BottomWall == false)
                 {
                     newY = newY + 1;
+                    validKeyPressed = true;
                 }
                 else if (key == ConsoleKey.A && maze[playerX, playerY].LeftWall == false)
                 {
                     newX = newX - 1;
+                    validKeyPressed = true;
                 }
                 else if (key == ConsoleKey.D && maze[playerX, playerY].RightWall == false)
                 {
                     newX = newX + 1;
+                    validKeyPressed = true;
                 }
                 int tempX = playerX; int tempY = playerY;              // gets the position it was at before it moves 
                 
@@ -584,20 +615,17 @@ namespace Prototype_2
                 {
                     movedFrom = ' ';
                 }
-                Console.CursorLeft = tempX * 4 + 2;
-                Console.CursorTop = tempY*2+4;                                 // sets previous position to console and displays what it was before you moved
-                Console.Write(movedFrom);
-
-                Console.CursorLeft = newX * 4+2;                               // sets current position to console and displays icon
-                Console.CursorTop = newY * 2+4;
-                Console.Write("P");
+                
                 
 
                 //pick up item with space
                 if (key == ConsoleKey.Spacebar && items[playerX, playerY] != null)
                 {
                     collected.Add(items[playerX, playerY]);
+                    markoqueeficus(items[playerX, playerY][0]);               // adds to collected list and updates inventory display
                     items[playerX, playerY] = null;
+                    validKeyPressed = true;
+
                 }
 
                 // checks if collected expression matches target (press ENTER)
@@ -637,8 +665,20 @@ namespace Prototype_2
                     Console.ReadKey(true);
                     break;
                 }
+                if (validKeyPressed)
+                {
+                    Console.CursorLeft = tempX * 4 + 2;
+                    Console.CursorTop = tempY * 2 + 4;                                 // sets previous position to console and displays what it was before you moved
+                    Console.Write(movedFrom);
+
+                    Console.CursorLeft = newX * 4 + 2;                               // sets current position to console and displays icon
+                    Console.CursorTop = newY * 2 + 4;
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write("P");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
             }
-            Main();
+            Main(); // restart game
         }
     }
 }
