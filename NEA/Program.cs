@@ -678,7 +678,13 @@ namespace Prototype_2
                     Console.ForegroundColor = ConsoleColor.White;
                 }
             }
-            Main(); // restart game
+            restart(); // restart game
+        }
+        static void restart()
+        {
+            maze = new Cell[width, height];
+            items = new string[width, height];
+            Main();
         }
     }
 }
